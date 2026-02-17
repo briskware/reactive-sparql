@@ -1,10 +1,10 @@
 package ai.agnos.test
 
-import akka.actor._
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, StatusCodes}
-import akka.stream.ActorMaterializer
-import akka.util.Timeout
+import org.apache.pekko.actor._
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, StatusCodes}
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.util.Timeout
 import ai.agnos.sparql.util.HttpEndpoint
 import ai.agnos.test.FusekiManager._
 
@@ -76,7 +76,7 @@ class  FusekiManager(val endpoint: HttpEndpoint) extends Actor with ActorLogging
 
   import context.dispatcher
   implicit val system = context.system
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer: Materializer = Materializer(context.system)
   implicit val timeout = Timeout(5 seconds)
 
   private val fusekiRunner = new FusekiRunner(endpoint.port, endpoint.path)

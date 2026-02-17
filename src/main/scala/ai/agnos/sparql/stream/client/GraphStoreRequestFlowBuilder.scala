@@ -6,14 +6,14 @@ import java.io.{StringReader, StringWriter}
 import java.net.URL
 import java.nio.file.Path
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.headers.Accept
-import akka.http.scaladsl.model.{HttpEntity, _}
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{FileIO, Flow, Framing, Source}
-import akka.util.ByteString
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.headers.Accept
+import org.apache.pekko.http.scaladsl.model.{HttpEntity, _}
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.{FileIO, Flow, Framing, Source}
+import org.apache.pekko.util.ByteString
 import ai.agnos.sparql.api._
 import ai.agnos.sparql.util.HttpEndpoint
 import org.eclipse.rdf4j.model.{IRI, Model}
@@ -67,7 +67,7 @@ trait GraphStoreRequestFlowBuilder extends SparqlClientHelpers with HttpClientFl
   import GraphStoreRequestFlowBuilder._
 
   implicit val system: ActorSystem
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: Materializer
 
 
   /**

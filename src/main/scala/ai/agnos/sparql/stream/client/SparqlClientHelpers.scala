@@ -2,11 +2,11 @@ package ai.agnos.sparql.stream.client
 
 import ai.agnos.sparql._
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpEntity, _}
-import akka.http.scaladsl.model.headers.{Accept, Authorization, BasicHttpCredentials}
-import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, PredefinedFromEntityUnmarshallers}
-import akka.stream.ActorMaterializer
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.model.{HttpEntity, _}
+import org.apache.pekko.http.scaladsl.model.headers.{Accept, Authorization, BasicHttpCredentials}
+import org.apache.pekko.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, PredefinedFromEntityUnmarshallers}
+import org.apache.pekko.stream.Materializer
 import ai.agnos.sparql.api._
 import ai.agnos.sparql.stream.client.SparqlClientConstants._
 import ai.agnos.sparql.util.{BasicAuthentication, HttpEndpoint}
@@ -20,7 +20,7 @@ trait SparqlClientHelpers {
   import HttpMethods._
 
   implicit val system: ActorSystem
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: Materializer
 
   implicit val rawBooleanFromEntityUnmarshaller: FromEntityUnmarshaller[Boolean] =
     PredefinedFromEntityUnmarshallers.stringUnmarshaller.map(_.toBoolean)

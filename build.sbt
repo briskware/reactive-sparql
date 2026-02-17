@@ -20,7 +20,8 @@ val buildSettings = Seq (
   Test / parallelExecution := false,
   coverageFailOnMinimum := true,
   coverageOutputHTML    := true,
-  coverageOutputXML     := true
+  coverageOutputXML     := true,
+  resolvers += Resolver.mavenCentral
 )
 
 

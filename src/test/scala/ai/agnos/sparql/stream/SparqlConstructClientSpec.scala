@@ -1,12 +1,12 @@
 package ai.agnos.sparql.stream
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Keep
-import akka.stream.testkit.{TestPublisher, TestSubscriber}
-import akka.stream.testkit.scaladsl.{TestSink, TestSource}
-import akka.testkit.TestKit
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Keep
+import org.apache.pekko.stream.testkit.{TestPublisher, TestSubscriber}
+import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.testkit.TestKit
 import ai.agnos.sparql.SparqlQueries
 import ai.agnos.sparql.api._
 import ai.agnos.sparql.stream.client.{HttpClientFlowBuilder, HttpEndpointFlow, SparqlRequestFlowBuilder}
@@ -27,7 +27,7 @@ class SparqlConstructClientSpec
   extends TestKit(ActorSystem("SparqlToModelConstructClientSpec"))
   with SparqlConstructSpecBase {
 
-  implicit val materializer: ActorMaterializer = ActorMaterializer()(system)
+  implicit val materializer: Materializer = Materializer(system)
   implicit val dispatcher: ExecutionContext = system.dispatcher
   implicit val prefixMapping: PrefixMapping = PrefixMapping.none
 

@@ -1,11 +1,11 @@
 package ai.agnos.sparql.stream.client
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.{ActorMaterializer, FlowShape}
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, ZipWith}
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.model.{HttpResponse, StatusCodes}
+import org.apache.pekko.http.scaladsl.unmarshalling.Unmarshal
+import org.apache.pekko.stream.{Materializer, FlowShape}
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, GraphDSL, ZipWith}
 import ai.agnos.sparql.api._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,7 +16,7 @@ trait SparqlUpdateFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppo
   import SparqlClientConstants._
 
   implicit val system: ActorSystem
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: Materializer
   implicit val dispatcher: ExecutionContext
 
   def sparqlUpdateFlow(endpointFlow: HttpEndpointFlow[SparqlRequest]): Flow[SparqlRequest, SparqlResponse, NotUsed] = {

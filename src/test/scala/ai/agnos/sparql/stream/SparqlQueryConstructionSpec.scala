@@ -2,7 +2,7 @@ package ai.agnos.sparql.stream
 
 import ai.agnos.sparql.api.SparqlQuery
 import org.scalatest.WordSpec
-import akka.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
 
 class SparqlQueryConstructionSpec extends WordSpec {
 

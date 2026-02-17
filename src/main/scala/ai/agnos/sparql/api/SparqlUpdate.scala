@@ -2,7 +2,7 @@ package ai.agnos.sparql.api
 
 import java.text.SimpleDateFormat
 
-import akka.http.scaladsl.model.{HttpMethod, HttpMethods}
+import org.apache.pekko.http.scaladsl.model.{HttpMethod, HttpMethods}
 
 object SparqlUpdate {
 

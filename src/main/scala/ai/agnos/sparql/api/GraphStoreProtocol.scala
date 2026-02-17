@@ -3,8 +3,8 @@ package ai.agnos.sparql.api
 import java.net.URL
 import java.nio.file.Path
 
-import akka.http.scaladsl.model.HttpMethod
-import akka.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.http.scaladsl.model.HttpMethod
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
 import org.eclipse.rdf4j.model.{IRI, Model}
 import org.eclipse.rdf4j.rio.RDFFormat
 import org.eclipse.rdf4j.rio.RDFFormat.NTRIPLES

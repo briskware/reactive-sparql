@@ -1,10 +1,10 @@
 package ai.agnos.sparql.stream.client
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model._
-import akka.stream.{ActorMaterializer, FlowShape}
-import akka.stream.scaladsl.{Flow, GraphDSL, Merge, Partition, Source}
-import akka.util.ByteString
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.model._
+import org.apache.pekko.stream.{Materializer, FlowShape}
+import org.apache.pekko.stream.scaladsl.{Flow, GraphDSL, Merge, Partition, Source}
+import org.apache.pekko.util.ByteString
 import ai.agnos.sparql.api._
 
 import scala.util.{Failure, Success, Try}
@@ -18,7 +18,7 @@ trait SparqlQueryFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppor
   import ai.agnos.sparql.mapper.SparqlClientJsonProtocol._
 
   implicit val system: ActorSystem
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: Materializer
   implicit val dispatcher: ExecutionContext
 
   def sparqlQueryFlow(endpointFlow: HttpEndpointFlow[SparqlRequest]): Flow[SparqlRequest, SparqlResponse, Any] = {

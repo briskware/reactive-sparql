@@ -3,7 +3,7 @@ package ai.agnos.sparql
 import ai.agnos.sparql.api._
 import org.eclipse.rdf4j.model.IRI
 
-import akka.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
 
 import ai.agnos.sparql.stream.client.SparqlClientConstants.{valueFactory => svf}
 

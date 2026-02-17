@@ -3,16 +3,16 @@ package ai.agnos.sparql.stream
 import java.io.File
 import java.net.URL
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.Http.ServerBinding
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl._
-import akka.stream.testkit.TestSubscriber.Probe
-import akka.stream.testkit.scaladsl.{TestSink, TestSource}
-import akka.testkit.TestKit
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.Http.ServerBinding
+import org.apache.pekko.http.scaladsl.model.{HttpEntity, HttpResponse}
+import org.apache.pekko.http.scaladsl.server.Directives._
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl._
+import org.apache.pekko.stream.testkit.TestSubscriber.Probe
+import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.testkit.TestKit
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -39,7 +39,7 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
   with SparqlQueries
   with RdfModelTestUtils {
 
-  implicit val materializer: ActorMaterializer = ActorMaterializer()(system)
+  implicit val materializer: Materializer = Materializer(system)
   implicit val dispatcher: ExecutionContext = system.dispatcher
   implicit val prefixMapping: PrefixMapping = PrefixMapping.none
 

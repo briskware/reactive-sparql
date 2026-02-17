@@ -1,6 +1,6 @@
 package ai.agnos.sparql.api
 
-import akka.http.scaladsl.model.HttpMethod
+import org.apache.pekko.http.scaladsl.model.HttpMethod
 
 
 /**

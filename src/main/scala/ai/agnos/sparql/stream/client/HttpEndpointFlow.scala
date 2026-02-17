@@ -1,8 +1,8 @@
 package ai.agnos.sparql.stream.client
 
-import akka.NotUsed
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
-import akka.stream.scaladsl.Flow
+import org.apache.pekko.NotUsed
+import org.apache.pekko.http.scaladsl.model.{HttpRequest, HttpResponse}
+import org.apache.pekko.stream.scaladsl.Flow
 import ai.agnos.sparql.util.HttpEndpoint
 
 import scala.util.Try

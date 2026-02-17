@@ -1,14 +1,14 @@
 package ai.agnos.sparql.stream
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl._
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl._
 
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials}
+import org.apache.pekko.http.scaladsl.model._
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials}
 import ai.agnos.test.HttpEndpointSuiteTestRunner
 
 import scala.concurrent.{Await, Future}
@@ -17,7 +17,7 @@ import scala.language.postfixOps
 
 
 import org.scalatest._
-import akka.testkit.TestKit
+import org.apache.pekko.testkit.TestKit
 
 /**
   * This test runs as part of the [[HttpEndpointSuiteTestRunner]] Suite.
@@ -26,7 +26,7 @@ import akka.testkit.TestKit
 class SparqlHttpSpec extends TestKit(ActorSystem("SparqlHttpSpec"))
   with WordSpecLike with MustMatchers with BeforeAndAfterAll {
 
-  implicit val testMaterializer = ActorMaterializer()
+    implicit val testMaterializer: Materializer = Materializer(system)
 
   import HttpEndpointSuiteTestRunner.testServerEndpoint._
 

@@ -1,8 +1,8 @@
 package ai.agnos.sparql.api
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{StatusCode, StatusCodes}
-import akka.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.model.{StatusCode, StatusCodes}
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
 
 
 trait SparqlClientProtocol extends ClientAPIProtocol

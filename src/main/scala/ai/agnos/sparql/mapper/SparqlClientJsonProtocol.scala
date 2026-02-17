@@ -1,8 +1,8 @@
 package ai.agnos.sparql.mapper
 
-import akka.http.scaladsl.unmarshalling._
+import org.apache.pekko.http.scaladsl.unmarshalling._
 import ai.agnos.sparql.api._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import org.apache.pekko.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 
 /**

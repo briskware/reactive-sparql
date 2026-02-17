@@ -1,8 +1,8 @@
 package ai.agnos.test
 
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.Http
-import akka.testkit.{ImplicitSender, TestKit}
+import org.apache.pekko.actor.{ActorSystem, Props}
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.testkit.{ImplicitSender, TestKit}
 import ai.agnos.sparql.stream._
 import ai.agnos.sparql.util.{BasicAuthentication, HttpEndpoint}
 import ai.agnos.test.FusekiManager._
@@ -98,7 +98,7 @@ class HttpEndpointSuiteTestRunner(_system: ActorSystem) extends TestKit(_system)
     new GraphStoreProtocolBuilderSpec()
   )
 
-  val _log = akka.event.Logging(this.system, testActor)
+  val _log = org.apache.pekko.event.Logging(this.system, testActor)
 
   private lazy val fusekiManager = system.actorOf(Props(classOf[FusekiManager], testServerEndpoint), "fuseki-manager")
 

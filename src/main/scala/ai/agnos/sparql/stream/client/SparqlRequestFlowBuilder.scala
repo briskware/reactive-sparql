@@ -1,8 +1,8 @@
 package ai.agnos.sparql.stream.client
 
-import akka.NotUsed
-import akka.stream.FlowShape
-import akka.stream.scaladsl.{Flow, GraphDSL, Merge, Partition}
+import org.apache.pekko.NotUsed
+import org.apache.pekko.stream.FlowShape
+import org.apache.pekko.stream.scaladsl.{Flow, GraphDSL, Merge, Partition}
 import ai.agnos.sparql.api.{SparqlConstruct, _}
 
 

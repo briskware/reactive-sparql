@@ -4,8 +4,9 @@ import sbt._
 object Version {
 
   val scala      = "2.13.12"
-  val akka       = "2.5.29"
-  val akkaHttp   = "10.1.11"
+  val pekko      = "1.0.2"
+  val pekkoHttp  = "1.0.1"
+  val sslconfig  = "0.6.1"
   val javaxWsRs  = "1.1.1"
   val rdf4j      = "2.1.6" //"2.3.2"
   val logback    = "1.2.3"
@@ -18,11 +19,12 @@ object Version {
 
 object Dependencies {
 
-  val akkaActor         = "com.typesafe.akka" %% "akka-actor"                        % Version.akka
-  val akkaStream        = "com.typesafe.akka" %% "akka-stream"                       % Version.akka
-  val akkaHttpCore      = "com.typesafe.akka" %% "akka-http-core"                    % Version.akkaHttp
-  val akkaHttpSprayJson = "com.typesafe.akka" %% "akka-http-spray-json"              % Version.akkaHttp
-  val akkaSlf4j         = "com.typesafe.akka" %% "akka-slf4j"                        % Version.akka
+  val pekkoActor         = "org.apache.pekko" %% "pekko-actor"                     % Version.pekko
+  val pekkoStream        = "org.apache.pekko" %% "pekko-stream"                    % Version.pekko
+  val pekkoHttpCore      = "org.apache.pekko" %% "pekko-http-core"                 % Version.pekkoHttp
+  val pekkoHttpSprayJson = "org.apache.pekko" %% "pekko-http-spray-json"           % Version.pekkoHttp
+  val pekkoSlf4j         = "org.apache.pekko" %% "pekko-slf4j"                     % Version.pekko
+  val sslConfigLib       = "com.typesafe"     %% "ssl-config-core"                 % Version.sslconfig
   val javaxWsRs         = "javax.ws.rs"       %  "jsr311-api"                        % Version.javaxWsRs
   val logbackClassic    = "ch.qos.logback"    %  "logback-classic"                   % Version.logback
   val rdf4jRuntime      = "org.eclipse.rdf4j" %  "rdf4j-runtime"                     % Version.rdf4j
@@ -30,13 +32,13 @@ object Dependencies {
   val xercesImpl        = "xerces"            %  "xercesImpl"                        % Version.xerces
 
   val scalaTest         = "org.scalatest"     %% "scalatest"                         % Version.scalaTest   % Test
-  val akkaTestkit       = "com.typesafe.akka" %% "akka-testkit"                      % Version.akka        % Test
-  val akkaStreamTestkit = "com.typesafe.akka" %% "akka-stream-testkit"               % Version.akka        % Test
+  val pekkoTestkit       = "org.apache.pekko" %% "pekko-testkit"                   % Version.pekko       % Test
+  val pekkoStreamTestkit = "org.apache.pekko" %% "pekko-stream-testkit"            % Version.pekko       % Test
   val fusekiServer      = "org.apache.jena"   %  "jena-fuseki-server"                % Version.fuseki      % Test
 
   val `reactive-sparql-dependencies` = Seq(
-    akkaActor, akkaStream, akkaHttpCore, akkaHttpSprayJson, akkaSlf4j,
+    pekkoActor, pekkoStream, pekkoHttpCore, pekkoHttpSprayJson, pekkoSlf4j, sslConfigLib,
     javaxWsRs, rdf4jRuntime,
-    logbackClassic, scalaTest, akkaTestkit, akkaStreamTestkit, fusekiServer,
+    logbackClassic, scalaTest, pekkoTestkit, pekkoStreamTestkit, fusekiServer,
     jakartaXmlBind, xercesImpl)
 }

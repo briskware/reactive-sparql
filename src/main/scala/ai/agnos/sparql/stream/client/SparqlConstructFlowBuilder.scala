@@ -1,11 +1,11 @@
 package ai.agnos.sparql.stream.client
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
-import akka.stream.{ActorMaterializer, FlowShape}
-import akka.stream.scaladsl.{Broadcast, Flow, Framing, GraphDSL, Merge, Partition, Source, ZipWith}
-import akka.util.ByteString
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.model.{HttpResponse, StatusCodes}
+import org.apache.pekko.stream.{Materializer, FlowShape}
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, Framing, GraphDSL, Merge, Partition, Source, ZipWith}
+import org.apache.pekko.util.ByteString
 import ai.agnos.sparql.api._
 import ai.agnos.sparql.stream.client.SparqlClientConstants.{modelFactory => mf, valueFactory => vf}
 import org.eclipse.rdf4j.model.{IRI, Model, Resource}
@@ -27,7 +27,7 @@ trait SparqlConstructFlowBuilder extends SparqlClientHelpers with ErrorHandlerSu
   import SparqlConstructFlowBuilder._
 
   implicit val system: ActorSystem
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: Materializer
   implicit val dispatcher: ExecutionContext
 
   type Sparql = String

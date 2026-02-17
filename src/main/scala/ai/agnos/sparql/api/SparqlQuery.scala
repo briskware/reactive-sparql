@@ -1,8 +1,8 @@
 package ai.agnos.sparql.api
 
-import akka.http.scaladsl.model._
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.http.scaladsl.model._
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import org.eclipse.rdf4j.model.{IRI, Value}
 import ai.agnos.sparql.stream.client.SparqlClientConstants._
 import ai.agnos.sparql.util.SparqlQueryStringConverter

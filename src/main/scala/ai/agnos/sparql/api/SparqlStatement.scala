@@ -1,6 +1,6 @@
 package ai.agnos.sparql.api
 
-import akka.http.scaladsl.model._
+import org.apache.pekko.http.scaladsl.model._
 
 import scala.concurrent.duration._
 import scala.language.postfixOps

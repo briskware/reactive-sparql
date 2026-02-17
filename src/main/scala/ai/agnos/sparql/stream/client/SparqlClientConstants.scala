@@ -1,7 +1,7 @@
 package ai.agnos.sparql.stream.client
 
-import akka.http.scaladsl.model.MediaType.NotCompressible
-import akka.http.scaladsl.model.{ContentType, HttpCharsets, MediaType}
+import org.apache.pekko.http.scaladsl.model.MediaType.NotCompressible
+import org.apache.pekko.http.scaladsl.model.{ContentType, HttpCharsets, MediaType}
 import org.eclipse.rdf4j.model.{ModelFactory, ValueFactory}
 import org.eclipse.rdf4j.model.impl.{LinkedHashModelFactory, SimpleValueFactory}
 
