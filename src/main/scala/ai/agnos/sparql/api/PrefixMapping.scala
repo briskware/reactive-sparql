@@ -1,6 +1,6 @@
 package ai.agnos.sparql.api
 
-import com.sun.org.apache.xerces.internal.util.XMLChar
+import org.apache.xerces.util.XMLChar
 
 import scala.util.control.Breaks._
 

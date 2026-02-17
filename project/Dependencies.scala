@@ -3,7 +3,7 @@ import sbt._
 
 object Version {
 
-  val scala      = "2.13.3"
+  val scala      = "2.13.12"
   val akka       = "2.5.29"
   val akkaHttp   = "10.1.11"
   val javaxWsRs  = "1.1.1"
@@ -12,6 +12,7 @@ object Version {
   val scalaTest  = "3.0.8"
   val fuseki     = "3.7.0"
   val xmlBind    = "2.3.2"
+  val xerces     = "2.12.2"
 }
 
 
@@ -26,14 +27,16 @@ object Dependencies {
   val logbackClassic    = "ch.qos.logback"    %  "logback-classic"                   % Version.logback
   val rdf4jRuntime      = "org.eclipse.rdf4j" %  "rdf4j-runtime"                     % Version.rdf4j
   val jakartaXmlBind    = "jakarta.xml.bind"  % "jakarta.xml.bind-api"               % Version.xmlBind
-  val scalaTest         = "org.scalatest"     %% "scalatest"                         % Version.scalaTest   % "it,test"
-  val akkaTestkit       = "com.typesafe.akka" %% "akka-testkit"                      % Version.akka        % "it,test"
-  val akkaStreamTestkit = "com.typesafe.akka" %% "akka-stream-testkit"               % Version.akka        % "it,test"
-  val fusekiServer      = "org.apache.jena"   %  "jena-fuseki-server"                % Version.fuseki      % "it,test"
+  val xercesImpl        = "xerces"            %  "xercesImpl"                        % Version.xerces
+
+  val scalaTest         = "org.scalatest"     %% "scalatest"                         % Version.scalaTest   % Test
+  val akkaTestkit       = "com.typesafe.akka" %% "akka-testkit"                      % Version.akka        % Test
+  val akkaStreamTestkit = "com.typesafe.akka" %% "akka-stream-testkit"               % Version.akka        % Test
+  val fusekiServer      = "org.apache.jena"   %  "jena-fuseki-server"                % Version.fuseki      % Test
 
   val `reactive-sparql-dependencies` = Seq(
     akkaActor, akkaStream, akkaHttpCore, akkaHttpSprayJson, akkaSlf4j,
     javaxWsRs, rdf4jRuntime,
     logbackClassic, scalaTest, akkaTestkit, akkaStreamTestkit, fusekiServer,
-    jakartaXmlBind)
+    jakartaXmlBind, xercesImpl)
 }

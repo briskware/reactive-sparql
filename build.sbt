@@ -16,16 +16,15 @@ val buildSettings = Seq (
   exportJars    := buildExportJars,
   updateOptions := updateOptions.value.withCachedResolution(true),
   shellPrompt   := { state => "sbt [%s]> ".format(Project.extract(state).currentProject.id) },
-  scalacOptions := Seq("-deprecation", "-unchecked", "-feature", "-target:jvm-1.8", "-language:implicitConversions", "-language:postfixOps", "-Xlint"),
-  parallelExecution in Test := false,
+  scalacOptions := Seq("-deprecation", "-unchecked", "-feature", "-release:8", "-language:implicitConversions", "-language:postfixOps", "-Xlint"),
+  Test / parallelExecution := false,
   coverageFailOnMinimum := true,
   coverageOutputHTML    := true,
   coverageOutputXML     := true
-) ++ Defaults.itSettings
+)
 
 
 lazy val project = Project("reactive-sparql", file("."))
-  .configs(IntegrationTest)
   .settings(buildSettings: _*)
   .settings(name := "reactive-sparql")
   .settings(libraryDependencies ++= `reactive-sparql-dependencies`)

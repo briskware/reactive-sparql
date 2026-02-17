@@ -42,6 +42,7 @@ target/
 .cache
 .project
 .target/
+.bsp/
 
 # IntelliJ specific
 .idea/
