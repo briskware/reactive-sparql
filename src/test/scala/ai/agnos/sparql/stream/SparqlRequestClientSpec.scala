@@ -14,7 +14,6 @@ import org.scalatest._
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 /**
   * This test runs as part of the [[HttpEndpointSuiteTestRunner]] Suite.
@@ -91,6 +90,7 @@ class SparqlRequestClientSpec extends TestKit(ActorSystem("SparqlRequestClientSp
 
       sink.expectNext(receiveTimeout) match {
         case SparqlResponse (_, true, _, result, None) => assert(result === query2Result)
+        case _ => fail("unexpected response")
       }
     }
 
@@ -101,6 +101,7 @@ class SparqlRequestClientSpec extends TestKit(ActorSystem("SparqlRequestClientSp
 
       sink.expectNext(receiveTimeout) match {
         case SparqlResponse (_, true, _, result, None) => assert(result === query2Result)
+        case _ => fail("unexpected response")
       }
 
     }

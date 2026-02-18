@@ -32,7 +32,7 @@ trait SparqlClientHelpers {
   def acceptQueryMediaType(queryType: QueryType): MediaType = {
     val ct = queryType match {
       case StreamedQuery(contentType) => contentType
-      case _: MappedQuery[_] => `application/sparql-results+json`
+      case _ => `application/sparql-results+json`
     }
     ct.mediaType
   }
@@ -65,7 +65,6 @@ trait SparqlClientHelpers {
         s"$QUERY_PARAM_NAME=${urlEncode(query)}&$REASONING_PARAM_NAME=$reasoning"
       )
 
-
     case SparqlUpdate(POST, update) =>
       HttpRequest(
         method = HttpMethods.POST,
@@ -75,6 +74,9 @@ trait SparqlClientHelpers {
         `application/x-www-form-urlencoded`,
         s"$UPDATE_PARAM_NAME=${urlEncode(update)}"
       )
+
+    case _ =>
+      throw new IllegalArgumentException(s"unsupported SPARQL statement: ${statement}")
   }
 
   // JC: the method name could be more specific
@@ -108,6 +110,9 @@ trait SparqlClientHelpers {
     case (Failure(throwable), request) =>
       val error = SparqlClientRequestFailedWithError("Request failed on the HTTP layer", throwable)
       SparqlResponse(success = false, request = request, error = Some(error))
+    case _ =>
+      val error = SparqlClientRequestFailed("Request failed with unknown error")
+      SparqlResponse(success = false, request = response._2, error = Some(error))
   }
 
   def mapRdfFormatToContentType(format: RDFFormat): ContentType = format match {
@@ -119,6 +124,8 @@ trait SparqlClientHelpers {
       `text/turtle`
     case f: RDFFormat if f == RDFFormat.JSONLD   =>
       `application/ld+json`
+    case _ =>
+      throw new IllegalArgumentException(s"unsupported RDF format: ${format.getName}")
   }
 
   def mapContentTypeToRdfFormat(contentType: ContentType): RDFFormat = {

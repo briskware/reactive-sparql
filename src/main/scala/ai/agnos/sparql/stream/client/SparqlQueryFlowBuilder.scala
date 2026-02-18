@@ -30,6 +30,7 @@ trait SparqlQueryFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppor
       val partition = builder.add(Partition[SparqlRequest](routes, {
         case SparqlRequest(SparqlQuery(_, _, StreamedQuery(_),_,_,_,_,_,_,_), _) => 0
         case SparqlRequest(SparqlQuery(_, _,_: MappedQuery[_],_,_,_,_,_,_,_), _) => 1
+        case _ => throw new IllegalArgumentException("unsupported query type")
       }))
 
       val responseMerger = builder.add(Merge[SparqlResponse](routes).named("merge.sparqlResponse"))
@@ -55,7 +56,7 @@ trait SparqlQueryFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppor
           _,
           List(StreamingSparqlResult(dataStream, Some(contentType))), _
         ) if isSparqlResultsJson(contentType) =>
-            Source.fromFuture {
+            Source.future {
               dataStream.runFold(ByteString.empty)(_ ++ _).map { data =>
                 Try(format3.read(data.utf8String.parseJson)) match {
                   case Success(x: ResultSet) =>
@@ -98,7 +99,8 @@ trait SparqlQueryFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppor
       .map {
         case request@SparqlRequest(query: SparqlQuery, _) =>
           (makeHttpRequest(endpointFlow.endpoint, query), request)
-        }
+        case _ => throw new IllegalArgumentException("unsupported request type")
+      }
       .log("SPARQL endpoint request")
       .via(endpointFlow.flow)
       .log("SPARQL endpoint response")
@@ -107,6 +109,8 @@ trait SparqlQueryFlowBuilder extends SparqlClientHelpers with ErrorHandlerSuppor
           SparqlResponse(request, status == StatusCodes.OK, status, result = StreamingSparqlResult(entity.dataBytes, Some(entity.contentType)) :: Nil)
         case (Failure(error), request) =>
           SparqlResponse(request, success = false, error = Some(SparqlClientRequestFailedWithError("failed to execute sparql query", error)))
+        case _ =>
+          throw new IllegalArgumentException("unexpected response when processing flow for request")
       }
 
   }

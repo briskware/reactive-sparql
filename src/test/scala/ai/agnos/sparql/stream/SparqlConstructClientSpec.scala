@@ -16,7 +16,6 @@ import org.scalatest._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -234,6 +233,7 @@ trait SparqlConstructSpecBase
     source.sendNext(SparqlRequest(queryModelGraph))
     sink.expectNext(receiveTimeout) match {
       case SparqlResponse (_, true, _, result, None) => assert(result == emptyResult)
+      case _ => fail("unexpected response")
     }
   }
 

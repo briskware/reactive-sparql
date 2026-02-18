@@ -3,7 +3,6 @@ package ai.agnos.sparql.api
 import org.apache.pekko.http.scaladsl.model._
 
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 
 /**

@@ -75,9 +75,9 @@ object FusekiManager {
 class  FusekiManager(val endpoint: HttpEndpoint) extends Actor with ActorLogging {
 
   import context.dispatcher
-  implicit val system = context.system
+  implicit val system: ActorSystem = context.system
   implicit val materializer: Materializer = Materializer(context.system)
-  implicit val timeout = Timeout(5 seconds)
+  implicit val timeout: Timeout = Timeout(5 seconds)
 
   private val fusekiRunner = new FusekiRunner(endpoint.port, endpoint.path)
 
@@ -102,7 +102,7 @@ class  FusekiManager(val endpoint: HttpEndpoint) extends Actor with ActorLogging
       // with multiple parameters to control behavior, not straightforward to understand
       //SSZ: True, but again, this is a test class that does the work for us already. I would not worry
       // about making it more understandable, unless you really think it would add more value?
-      self ! Ping(sender, sendOnSuccess = StartOk, sendOnFailure = StartError, pingInterval = 3 seconds, retriesLeft = 30)
+      self ! Ping(sender(), sendOnSuccess = StartOk, sendOnFailure = StartError, pingInterval = 3 seconds, retriesLeft = 30)
 
     case x @ Ping(originalSender, sendOnSuccess, sendOnFailure, pingInterval, stopOnSuccess, 0) =>
       log.info(s"Ping timeout for $x")
@@ -133,7 +133,7 @@ class  FusekiManager(val endpoint: HttpEndpoint) extends Actor with ActorLogging
       }
 
     case Shutdown =>
-      val originalSender = sender
+      val originalSender = sender()
       log.info(s"Sending: $shutdownReq")
       pipeline(shutdownReq) onComplete {
         case Success(HttpResponse(StatusCodes.OK, _, _, _)) =>

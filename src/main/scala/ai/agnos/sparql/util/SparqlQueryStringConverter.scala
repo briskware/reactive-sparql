@@ -23,6 +23,7 @@ object SparqlQueryStringConverter {
           urlEncode(l.toString)
         case i: IRI => urlEncode(s"<${i.toString}>")
         case _: BNode => throw new IllegalArgumentException("BNode bindings are not allowed")
+        case _ => throw new IllegalArgumentException(s"unsupported binding value type [${value.getClass.getName}]")
       }
     }
     def mkColBindings[T](bindVar: String, value: Iterable[T]): Iterable[String] = {

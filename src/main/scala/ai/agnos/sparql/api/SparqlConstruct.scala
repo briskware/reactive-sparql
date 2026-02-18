@@ -120,7 +120,8 @@ abstract class SparqlConstruct()(
       case literal: Literal =>
         val tpe = literal.getDatatype
         s"'${literal.stringValue()}'^^${pm.getNsURIPrefix(tpe.getNamespace)}:${tpe.getLocalName}"
-      case bn: BNode => throw new IllegalArgumentException("Should not use Blank Node as query parameter")
+      case _: BNode => throw new IllegalArgumentException("Should not use Blank Node as query parameter")
+      case _ => throw new IllegalArgumentException(s"Unsupported value type ${value.getClass.getName}")
     }
   }
 }

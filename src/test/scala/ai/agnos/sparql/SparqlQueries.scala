@@ -8,7 +8,7 @@ import org.apache.pekko.http.scaladsl.model.HttpMethods._
 import ai.agnos.sparql.stream.client.SparqlClientConstants.{valueFactory => svf}
 
 trait SparqlQueries {
-  implicit val pm = PrefixMapping.extended
+  implicit val pm: PrefixMapping = PrefixMapping.extended
 
   implicit def stringToIri(iri: String): IRI = {
     svf.createIRI(iri.toString)

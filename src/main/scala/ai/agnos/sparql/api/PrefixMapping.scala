@@ -22,7 +22,6 @@ object NamespaceConstants {
 
   val RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   val RDFS = "http://www.w3.org/2000/01/rdf-schema#"
-  val RDFSyntax = "http://www.w3.org/TR/rdf-syntax-grammar#"
   val OWL = "http://www.w3.org/2002/07/owl#"
   val DC_11 = "http://purl.org/dc/elements/1.1/"
   val TERMS = "http://purl.org/dc/terms/"
@@ -37,7 +36,7 @@ object PrefixMapping {
 
   import NamespaceConstants._
 
-  class IllegalPrefixException(prefix : String) extends IllegalArgumentException
+  private class IllegalPrefixException(prefix : String) extends IllegalArgumentException(prefix)
 
   def none = new PrefixMapping
 
@@ -45,7 +44,7 @@ object PrefixMapping {
    * A PrefixMapping that contains the "standard" prefixes we know about,
    * viz rdf, rdfs, dc, rss, vcard, and owl.
    */
-  def standard = {
+  def standard: PrefixMapping = {
     val pm = new PrefixMapping
     pm.setNsPrefix(PREFIX_RDFS, RDFS)
     pm.setNsPrefix(PREFIX_RDF, RDF)
@@ -55,7 +54,7 @@ object PrefixMapping {
     pm
   }
 
-  def extended = {
+  def extended: PrefixMapping = {
     val pm = standard
     pm.setNsPrefix(PREFIX_SKOS, SKOS)
     pm.setNsPrefix(PREFIX_FOAF, FOAF)
@@ -86,7 +85,7 @@ object PrefixMapping {
    * @param uri
    * @return the index of the first character of the localname
    */
-  def splitNamespace(uri : String) : Int = {
+  private def splitNamespace(uri : String) : Int = {
 
     // XML Namespaces 1.0:
     // A qname name is NCName ':' NCName
@@ -115,7 +114,7 @@ object PrefixMapping {
     while (i >= 1) {
       i -= 1
       ch = uri.charAt(i)
-      if (notNameChar(ch)) break
+      if (notNameChar(ch)) break()
     }
 
     var j = i + 1
@@ -152,7 +151,7 @@ object PrefixMapping {
         // Do a quick test before calling .startsWith
         // OLD: if ( uri.charAt(j - 1) == ':' && uri.lastIndexOf(':', j - 2) == -1)
         //
-        if (!(j == 7 && uri.startsWith("mailto:"))) break
+        if (!(j == 7 && uri.startsWith("mailto:"))) break()
       }
     }
     j
@@ -161,11 +160,11 @@ object PrefixMapping {
   /**
    * answer true iff this is not a legal NCName character, ie, is a possible split-point start.
    */
-  def notNameChar(ch : Char) : Boolean = !XMLChar.isNCName(ch)
+  private def notNameChar(ch : Char) : Boolean = !XMLChar.isNCName(ch)
 }
 
 /**
- * Inspired by Jena's PrefixMappingImpl class, this class does more or les the same.
+ * Inspired by Jena's PrefixMappingImpl class, this class does more or less the same.
  *
  * See http://svn.apache.org/repos/asf/jena/trunk/jena-core/src/main/java/com/hp/hpl/jena/shared/impl/PrefixMappingImpl.java
  */
@@ -173,10 +172,10 @@ class PrefixMapping {
 
   import PrefixMapping._
 
-  protected var prefixToURI : Map[String, String] = Map.empty
-  protected var URItoPrefix : Map[String, String] = Map.empty
+  private var prefixToURI : Map[String, String] = Map.empty
+  private var URItoPrefix : Map[String, String] = Map.empty
 
-  protected def set(prefix : String, uri : String) {
+  private def set(prefix : String, uri : String): Unit = {
     prefixToURI += prefix -> uri
     URItoPrefix += uri -> prefix
   }
@@ -198,7 +197,7 @@ class PrefixMapping {
     this
   }
 
-  protected def regenerateReverseMapping() {
+  private def regenerateReverseMapping(): Unit = {
     URItoPrefix = prefixToURI.map(_.swap)
   }
 
@@ -209,7 +208,7 @@ class PrefixMapping {
    */
   def withDefaultMappings(other : PrefixMapping) : PrefixMapping = {
 
-    for ((prefix, uri) ← other.prefixToURI) {
+    for ((prefix, uri) <- other.prefixToURI) {
       if (getNsPrefixURI(prefix) == null && getNsURIPrefix(uri) == null) {
         setNsPrefix(prefix, uri)
       }
@@ -226,9 +225,9 @@ class PrefixMapping {
    *
    * @param other the Map whose bindings we are to add to this.
    */
-  def setNsPrefixes(other : Map[String, String]) : PrefixMapping = {
+  private def setNsPrefixes(other : Map[String, String]) : PrefixMapping = {
 
-    for ((prefix, uri) ← other) {
+    for ((prefix, uri) <- other) {
       setNsPrefix(prefix, uri)
     }
 
@@ -245,7 +244,7 @@ class PrefixMapping {
   /**
    * Checks that a prefix is "legal" - it must be a valid XML NCName.
    */
-  private def checkLegal(prefix : String) {
+  private def checkLegal(prefix : String): Unit = {
     if (prefix.length > 0 && !XMLChar.isValidNCName(prefix))
       throw new PrefixMapping.IllegalPrefixException(prefix)
   }
@@ -309,7 +308,7 @@ class PrefixMapping {
    * Answer the qname for <code>uri</code> which uses a prefix from this mapping, or null if there isn't one.
    * <p>
    *   Relies on <code>splitNamespace</code> to carve uri into namespace and
-   *   localname components; this ensures that the localname is legal and we just
+   *   localname components; this ensures that the localname is legal, and we just
    *   have to (reverse-)lookup the namespace in the prefix table.
    * </p>
    * @see com.hp.hpl.jena.shared.PrefixMapping#qnameFor(java.lang.String)
@@ -330,52 +329,18 @@ class PrefixMapping {
       null
     }
     else {
-      prefix + ":" + local
+      s"$prefix:$local"
     }
   }
 
   /**
-   * Compress the URI using the prefix mapping. This version of the code looks through all the maplets and checks each
-   * candidate prefix URI for being a leading substring of the argument URI. There's probably a much more efficient
-   * algorithm available, pre-processing the prefix strings into some kind of search table, but for the moment we don't
-   * need it.
+   * Compress the URI using the prefix mapping. This version of the code looks through all the maplet
    */
-  def shortForm(uri : String) : String = {
-    val (prefix, otherUri) = findMapping(uri, true)
-    if (prefix == null) {
-      uri
-    }
-    else {
-      s"${prefix}:${uri.substring(otherUri.length)}"
-    }
-  }
-
-  def samePrefixMappingAs(other : PrefixMapping) : Boolean = prefixToURI == other.prefixToURI
-
-  /**
-   * Answer a prefixToURI entry in which the value is an initial substring of <code>uri</code>.
-   * If <code>partial</code> is false, then the value must equal <code>uri</code>.
-   *
-   * Does a linear search of the entire prefixToURI, so not terribly efficient for large maps.
-   *
-   * @param uri the value to search for
-   * @param partial true if the match can be any leading substring, false for exact match
-   * @return some entry (k, v) such that uri starts with v [equal for partial=false]
-   */
-  private def findMapping(uri : String, partial : Boolean) : (String, String) = {
-    for ((prefix, otherUri) ← prefixToURI) {
-      if (uri.startsWith(otherUri) && (partial || otherUri.length == uri.length)) {
-        return (prefix, otherUri)
-      }
-    }
-    (null, null)
+  def sparql : String = {
+    pairs.map {
+      case (key, value) => s"PREFIX ${key}: <${value}>"
+    }.mkString("\n", "\n", "\n")
   }
 
   private def pairs = prefixToURI.toList sortBy { _._1 }
-
-  def sparql : String = {
-    pairs map {
-      case (key, value) ⇒ s"PREFIX ${key}: <${value}>"
-    } mkString ("\n", "\n", "\n")
-  }
 }

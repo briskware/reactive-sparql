@@ -57,7 +57,7 @@ trait SparqlConstructFlowBuilder extends SparqlClientHelpers with ErrorHandlerSu
   }
 
   def deReifyConstructSubGraph(): Flow[Model, Model, NotUsed] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     Flow[Model]
       .mapConcat(_.stream().iterator().asScala.toList)
       .sliding(4,4)
@@ -81,6 +81,12 @@ trait SparqlConstructFlowBuilder extends SparqlClientHelpers with ErrorHandlerSu
         // TODO: Add support for sliding through the entity 4 lines at a time (see responseToPagingModelFlow)
         case (Success(HttpResponse(StatusCodes.OK, _, entity, _)), _) =>
           entity.withoutSizeLimit().dataBytes.fold(ByteString.empty)(_ ++ _).zip(Source.single(entity.contentType))
+        case (Failure(err), req) =>
+          errorHandler.handleError(err)
+          Source.empty
+        case _ =>
+          errorHandler.handleError(new IllegalArgumentException("unexpected response when processing flow for request"))
+          Source.empty
       }
       .map { x =>
         Rio.parse(x._1.iterator.asInputStream, "", mapContentTypeToRdfFormat(x._2))
@@ -93,25 +99,30 @@ trait SparqlConstructFlowBuilder extends SparqlClientHelpers with ErrorHandlerSu
     * This flow will also consume the Http response entity if it is received via a valid HTTP response with
     * an HTTP status code and produces a corresponding SparqlErrorResult
     */
-  lazy val responseToFailureFlow: Flow[(Try[HttpResponse], SparqlRequest), SparqlResult, NotUsed] = {
+  private lazy val responseToFailureFlow: Flow[(Try[HttpResponse], SparqlRequest), SparqlResult, NotUsed] = {
     Flow[(Try[HttpResponse], SparqlRequest)]
       .flatMapConcat {
         case (Success(HttpResponse(code, _, entity, _)), _) =>
-          entity.withoutSizeLimit().dataBytes.fold(ByteString.empty)(_ ++ _).map {
-            case message: ByteString => SparqlErrorResult(
+          entity.withoutSizeLimit().dataBytes.fold(ByteString.empty)(_ ++ _).map { message: ByteString =>
+            SparqlErrorResult(
               error = new RuntimeException(
                 s"${message.utf8String}"
               ),
               code = code.intValue(),
-              message = "SPARQL endpoint returned unexpected response body")
+              message = "SPARQL endpoint returned unexpected response body"
+            )
           }
         case (Failure(err), req) =>
           errorHandler.handleError(err)
           Source.single(SparqlErrorResult(err, 0, s"unexpected error when processing flow for request: ${req}"))
+        case _ =>
+          val err = new IllegalArgumentException("unexpected response when processing flow for request")
+          errorHandler.handleError(err)
+          Source.single(SparqlErrorResult(err, 0, err.getMessage))
       }
   }
 
-  val responseToResultFlow: Flow[(Try[HttpResponse], SparqlRequest), SparqlResult, NotUsed] = {
+  private val responseToResultFlow: Flow[(Try[HttpResponse], SparqlRequest), SparqlResult, NotUsed] = {
     Flow.fromGraph(GraphDSL.create() { implicit builder =>
       import GraphDSL.Implicits._
 
@@ -130,11 +141,14 @@ trait SparqlConstructFlowBuilder extends SparqlClientHelpers with ErrorHandlerSu
   }
 
 
-  @deprecated
+  @deprecated("Use responseToSuccessFlow instead", "1.0.0")
   lazy val responseToPagingModelFlow: Flow[(Try[HttpResponse], SparqlRequest), SparqlResult, NotUsed] = {
     Flow[(Try[HttpResponse], SparqlRequest)]
       .flatMapConcat {
         case (Success(HttpResponse(StatusCodes.OK, _, entity, _)), _) => entity.withoutSizeLimit().getDataBytes()
+        case _ =>
+          errorHandler.handleError(new IllegalArgumentException("unexpected response when processing flow for request"))
+          Source.empty
       }
       .via(Framing.delimiter(ByteString.fromString("\n"), 1*1024, allowTruncation = true))
       .map( bs => Rio.parse(bs.iterator.asInputStream, "", RDFFormat.NQUADS).stream().findFirst().get())

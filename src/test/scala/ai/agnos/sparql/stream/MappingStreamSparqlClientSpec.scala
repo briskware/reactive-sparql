@@ -12,9 +12,8 @@ import ai.agnos.sparql.stream.client.{HttpClientFlowBuilder, HttpEndpointFlow, S
 import ai.agnos.test.HttpEndpointSuiteTestRunner
 import org.scalatest._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 /**
   * This test runs as part of the [[HttpEndpointSuiteTestRunner]] Suite.
@@ -24,12 +23,12 @@ class MappingStreamSparqlClientSpec() extends TestKit(ActorSystem("MappingStream
   with WordSpecLike with MustMatchers with BeforeAndAfterAll with SparqlQueries with SparqlRequestFlowBuilder with HttpClientFlowBuilder {
 
   implicit val materializer: Materializer = Materializer(system)
-  implicit val dispatcher = system.dispatcher
-  implicit val prefixMapping = PrefixMapping.none
+  implicit val dispatcher: ExecutionContext = system.dispatcher
+  implicit val prefixMapping: PrefixMapping = PrefixMapping.none
 
   implicit val errorHandler: ErrorHandler = DefaultErrorHandler
 
-  val receiveTimeout = 5 seconds
+  val receiveTimeout: FiniteDuration = 5 seconds
 
   import HttpEndpointSuiteTestRunner._
 
@@ -52,6 +51,7 @@ class MappingStreamSparqlClientSpec() extends TestKit(ActorSystem("MappingStream
 
       sink.expectNext(receiveTimeout) match {
         case SparqlResponse (_, true, _, result, None) => assert(result === emptyResult)
+        case _ => fail("unexpected response")
       }
     }
 

@@ -26,6 +26,7 @@ trait SparqlRequestFlowBuilder extends SparqlQueryFlowBuilder
         case SparqlRequest(_: SparqlQuery, _)     => 0
         case SparqlRequest(_: SparqlUpdate, _)    => 1
         case SparqlRequest(_: SparqlConstruct, _) => 2
+        case _ => throw new IllegalArgumentException("unsupported query type")
       }))
 
       val responseMerger = builder.add(Merge[SparqlResponse](routes).named("merge.sparqlResponse"))

@@ -43,7 +43,7 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
   implicit val dispatcher: ExecutionContext = system.dispatcher
   implicit val prefixMapping: PrefixMapping = PrefixMapping.none
 
-  import scala.collection.JavaConverters._
+  import scala.jdk.CollectionConverters._
 
   implicit val errorHandler: ErrorHandler = DefaultErrorHandler
 
@@ -128,6 +128,8 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
         }
       case SparqlResponse(request, success, _, result, error) =>
         info(s"response status for $request ===>>> $success / ${result.size} items/ error: $error")
+      case _ =>
+        fail(s"unexpected response: $response")
 
     }
     response
@@ -174,6 +176,7 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
       checkAllGood(sparqlSink) match {
         case SparqlResponse (_, true, _, result, None) =>
           assert(result === query1Result)
+        case _ => fail("unexpected response")
       }
 
       // now check with GetGraph (graph-store protocol variant)
@@ -194,6 +197,7 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
       checkAllGood(sparqlSink) match {
         case SparqlResponse (_, true, _, result, None) =>
           assert(result === query2Result)
+        case _ => fail("unexpected response")
       }
 
       // now check with GetGraph (graph-store protocol variant)
@@ -215,6 +219,7 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
       checkAllGood(sparqlSink) match {
         case SparqlResponse (_, true, _, result, None) =>
           assert(result === query2Result)
+        case _ => fail("unexpected response")
       }
 
       // now check with GetGraph (graph-store protocol variant)
@@ -299,10 +304,12 @@ class GraphStoreProtocolBuilderSpec extends TestKit(ActorSystem("GraphStoreProto
               case path if path.toString == "labels.ttl" =>
                 val fileSource = FileIO.fromPath(new File(s"$rootFolder/$path").toPath)
                 complete(HttpResponse(entity = HttpEntity(`text/turtle`, fileSource)))
+              case path =>
+                complete(HttpResponse(status = 404, entity = s"file not found: $path") )
             }
           }
 
-        Http().bindAndHandle(route, serverEndpoint.host, serverEndpoint.port, log = system.log)
+        Http().newServerAt(serverEndpoint.host, serverEndpoint.port).bind(route)
       }
 
       val endpoint = HttpEndpoint.localhostWithAutomaticPort("/resources")

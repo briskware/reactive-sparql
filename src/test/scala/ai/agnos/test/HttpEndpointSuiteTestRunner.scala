@@ -35,15 +35,15 @@ object HttpEndpointSuiteTestRunner {
   val config: Config = {
     ConfigFactory.parseString(
       s"""
-         |akka.loggers = ["akka.testkit.TestEventListener"]
-         |akka.loglevel = INFO
-         |akka.remote {
+         |pekko.loggers = ["org.apache.pekko.testkit.TestEventListener"]
+         |pekko.loglevel = INFO
+         |pekko.remote {
          |  netty.tcp {
          |    hostname = ""
          |    port = 0
          |  }
          |}
-         |akka.cluster {
+         |pekko.cluster {
          |  seed-nodes = []
          |}
          |sparql.client {
@@ -52,7 +52,7 @@ object HttpEndpointSuiteTestRunner {
          |  password = "admin"
          |}
          |
-         |akka {
+         |pekko {
          |  http {
          |    server.parsing.illegal-header-warnings = off
          |    client.parsing.illegal-header-warnings = off
@@ -105,14 +105,14 @@ class HttpEndpointSuiteTestRunner(_system: ActorSystem) extends TestKit(_system)
   val startTimeout = 100 seconds
   val stopTimeout = 20 seconds
 
-  override def beforeAll() {
+  override def beforeAll(): Unit = {
     if (useFuseki) {
       fusekiManager ! Start
       expectMsg(startTimeout, StartOk)
     }
   }
 
-  override def afterAll() {
+  override def afterAll(): Unit = {
     if (useFuseki) {
       fusekiManager ! Shutdown
       expectMsg(stopTimeout, "Allowing Fuseki Server to shut down", ShutdownOk)
@@ -125,7 +125,7 @@ class HttpEndpointSuiteTestRunner(_system: ActorSystem) extends TestKit(_system)
     *
     * @param system The ActorSystem currently in use.
     */
-  def shutdownSystem(implicit system: ActorSystem) {
+  def shutdownSystem(implicit system: ActorSystem): Unit = {
     Await.result(Http().shutdownAllConnectionPools(), 5 seconds)
     Await.result(system.terminate(), 5 seconds)
   }

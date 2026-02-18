@@ -40,5 +40,3 @@ pomExtra := {
     </developer>
   </developers>
 }
-
-pgpReadOnly := true

@@ -37,7 +37,7 @@ object Dependencies {
   val fusekiServer      = "org.apache.jena"   %  "jena-fuseki-server"                % Version.fuseki      % Test
 
   val `reactive-sparql-dependencies` = Seq(
-    pekkoActor, pekkoStream, pekkoHttpCore, pekkoHttpSprayJson, pekkoSlf4j, sslConfigLib,
+    pekkoActor, pekkoStream, pekkoHttpCore, pekkoHttpSprayJson, pekkoSlf4j,
     javaxWsRs, rdf4jRuntime,
     logbackClassic, scalaTest, pekkoTestkit, pekkoStreamTestkit, fusekiServer,
     jakartaXmlBind, xercesImpl)

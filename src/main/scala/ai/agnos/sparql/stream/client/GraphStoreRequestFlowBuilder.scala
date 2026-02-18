@@ -114,7 +114,11 @@ trait GraphStoreRequestFlowBuilder extends SparqlClientHelpers with HttpClientFl
   }
 
   def makeModelSource(entity: HttpEntity): Source[Option[Model], Any] = {
-    if ( !entity.isChunked() && (entity.isKnownEmpty() || entity.contentLengthOption.getOrElse(0) == 0)) {
+    if ( !entity.isChunked() &&
+          (
+            entity.isKnownEmpty()
+              || entity.contentLengthOption.map(_.toLong).getOrElse(0L) == 0)
+       ) {
       // if we know there are no bytes in the entity (no-graph has been returned)
       // or the reponse content type is not what we have requested then no model is emitted.
       entity.discardBytes()
@@ -198,6 +202,9 @@ trait GraphStoreRequestFlowBuilder extends SparqlClientHelpers with HttpClientFl
         makeInsertGraphHttpRequest(endpoint, method, graphUri, mapRdfFormatToContentType(format)) {
           () => makeGraphSource(path, format)
         }
+
+      case _ =>
+        throw new IllegalArgumentException(s"unsupported graph store request: ${request}")
     }
   }
 

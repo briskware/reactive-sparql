@@ -14,21 +14,21 @@ object SparqlClientJsonProtocol extends SprayJsonSupport with DefaultJsonProtoco
     * A set if JSON parsers form "query results" format compliant
     * with https://www.w3.org/TR/2013/REC-sparql11-results-json-20130321/
     */
-  implicit val format4 = jsonFormat3(QuerySolutionValue)
+  implicit val format4: RootJsonFormat[QuerySolutionValue] = jsonFormat3(QuerySolutionValue)
   implicit object format5 extends RootJsonFormat[QuerySolution] {
     def write(c : QuerySolution) = {
       JsObject(c.values.map(e => e._1 -> e._2.toJson))
     }
     def read(row : JsValue) = read(row.asInstanceOf[JsObject])
     def read(row : JsObject) = {
-      QuerySolution((row.fields mapValues {
+      QuerySolution((row.fields.view.mapValues {
         (value : JsValue) => value.convertTo[QuerySolutionValue]
-      }).toMap)
+      }.toMap))
     }
   }
-  implicit val format2 = jsonFormat(ResultSetResults, "bindings")
-  implicit val format1 = jsonFormat(ResultSetVars, "vars")
-  implicit val format3 = jsonFormat2(ResultSet)
+  implicit val format2: RootJsonFormat[ResultSetResults] = jsonFormat(ResultSetResults, "bindings")
+  implicit val format1: RootJsonFormat[ResultSetVars] = jsonFormat(ResultSetVars, "vars")
+  implicit val format3: RootJsonFormat[ResultSet] = jsonFormat2(ResultSet)
 
 
   /**
@@ -36,7 +36,7 @@ object SparqlClientJsonProtocol extends SprayJsonSupport with DefaultJsonProtoco
     * @return
     */
   implicit def booleanEntityUnmarshaller: FromEntityUnmarshaller[Boolean] =
-    byteStringUnmarshaller mapWithInput { (entity, bytes) ⇒
+    byteStringUnmarshaller mapWithInput { (entity, bytes) =>
       if (entity.isKnownEmpty) false
       else bytes.decodeString(Unmarshaller.bestUnmarshallingCharsetFor(entity).nioCharset.name).toLowerCase.equals("true")
     }
